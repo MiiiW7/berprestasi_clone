@@ -15,27 +15,27 @@ import searchRoute from './routes/searchRoute.js';
 import './src/postSchedulerJob.js';
 import fs from 'fs';
 
-// Conditional import based on environment
-let checkAndUpdatePosts;
-if (process.env.VERCEL === '1') {
-  console.log('Running on Vercel, using compatible scheduler');
-  import('./src/vercelCompatScheduler.js')
-    .then(module => {
-      checkAndUpdatePosts = module.default;
-      console.log('Vercel compatible scheduler loaded');
-    })
-    .catch(err => {
-      console.error('Error loading compatible scheduler:', err);
-    });
-} else {
-  console.log('Running locally, using node-cron scheduler');
-  try {
-    import('./src/postSchedulerJob.js')
-      .catch(err => console.error('Error loading scheduler:', err));
-  } catch (error) {
-    console.error('Error importing scheduler:', error);
-  }
-}
+// // Conditional import based on environment
+// let checkAndUpdatePosts;
+// if (process.env.VERCEL === '1') {
+//   console.log('Running on Vercel, using compatible scheduler');
+//   import('./src/vercelCompatScheduler.js')
+//     .then(module => {
+//       checkAndUpdatePosts = module.default;
+//       console.log('Vercel compatible scheduler loaded');
+//     })
+//     .catch(err => {
+//       console.error('Error loading compatible scheduler:', err);
+//     });
+// } else {
+//   console.log('Running locally, using node-cron scheduler');
+//   try {
+//     import('./src/postSchedulerJob.js')
+//       .catch(err => console.error('Error loading scheduler:', err));
+//   } catch (error) {
+//     console.error('Error importing scheduler:', error);
+//   }
+// }
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -49,25 +49,26 @@ app.use(express.json());
 //app.use(vercelCompatMiddleware);
 
 // CORS middleware - lebih permisif dan diletakkan sebelum middleware lain
-app.use((req, res, next) => {
-  // Izinkan semua origins (lebih permisif)
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization, Origin, Accept');
-  res.setHeader('Access-Control-Max-Age', '86400'); // 24 jam cache untuk preflight requests
+// app.use((req, res, next) => {
+//   // Izinkan semua origins (lebih permisif)
+//   res.setHeader('Access-Control-Allow-Origin', '*');
+//   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
+//   res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Authorization, Origin, Accept');
+//   res.setHeader('Access-Control-Max-Age', '86400'); // 24 jam cache untuk preflight requests
   
-  // Handle OPTIONS (preflight) requests
-  if (req.method === 'OPTIONS') {
-    console.log('OPTIONS request dari origin:', req.headers.origin);
-    return res.status(200).end();
-  }
+//   // Handle OPTIONS (preflight) requests
+//   if (req.method === 'OPTIONS') {
+//     console.log('OPTIONS request dari origin:', req.headers.origin);
+//     return res.status(200).end();
+//   }
   
-  // Log detail permintaan untuk debug
-  console.log(`${req.method} request ke ${req.path}`);
-  console.log('Headers:', JSON.stringify(req.headers));
+//   // Log detail permintaan untuk debug
+//   console.log(`${req.method} request ke ${req.path}`);
+//   console.log('Headers:', JSON.stringify(req.headers));
   
-  next();
-});
+//   next();
+// });
+app.use(cors());
 
 // Middleware untuk menjalankan scheduler pada setiap request jika di Vercel
 app.use(async (req, res, next) => {
