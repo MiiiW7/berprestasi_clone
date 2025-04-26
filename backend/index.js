@@ -71,16 +71,16 @@ app.use(express.json());
 app.use(cors());
 
 // Middleware untuk menjalankan scheduler pada setiap request jika di Vercel
-app.use(async (req, res, next) => {
-  if (process.env.VERCEL === '1' && checkAndUpdatePosts) {
-    try {
-      await checkAndUpdatePosts();
-    } catch (error) {
-      console.error('Error running scheduler on request:', error);
-    }
-  }
-  next();
-});
+// app.use(async (req, res, next) => {
+//   if (process.env.VERCEL === '1' && checkAndUpdatePosts) {
+//     try {
+//       await checkAndUpdatePosts();
+//     } catch (error) {
+//       console.error('Error running scheduler on request:', error);
+//     }
+//   }
+//   next();
+// });
 
 // Create uploads directories if they don't exist
 const profilesDir = path.resolve(__dirname, 'uploads', 'profiles');
@@ -90,33 +90,33 @@ console.log("Profiles directory path:", profilesDir);
 console.log("Posts directory path:", postsDir);
 
 // Disable directory creation on Vercel environment (serverless)
-if (process.env.VERCEL !== '1') {
-  try {
-    console.log("Creating upload directories...");
-    fs.mkdirSync(profilesDir, { recursive: true });
-    fs.mkdirSync(postsDir, { recursive: true });
-    console.log('Upload directories created successfully');
-    console.log("Profiles directory exists:", fs.existsSync(profilesDir));
-    console.log("Posts directory exists:", fs.existsSync(postsDir));
+// if (process.env.VERCEL !== '1') {
+//   try {
+//     console.log("Creating upload directories...");
+//     fs.mkdirSync(profilesDir, { recursive: true });
+//     fs.mkdirSync(postsDir, { recursive: true });
+//     console.log('Upload directories created successfully');
+//     console.log("Profiles directory exists:", fs.existsSync(profilesDir));
+//     console.log("Posts directory exists:", fs.existsSync(postsDir));
     
-    // Set permissions
-    try {
-      fs.chmodSync(profilesDir, 0o777);
-      fs.chmodSync(postsDir, 0o777);
-      console.log("Directory permissions set to 777");
-    } catch (permErr) {
-      console.error("Error setting directory permissions:", permErr);
-    }
-  } catch (err) {
-    console.error('Error creating upload directories:', err);
-    console.error('Error details:', JSON.stringify({
-      code: err.code,
-      path: err.path,
-      errno: err.errno,
-      syscall: err.syscall
-    }));
-  }
-}
+//     // Set permissions
+//     try {
+//       fs.chmodSync(profilesDir, 0o777);
+//       fs.chmodSync(postsDir, 0o777);
+//       console.log("Directory permissions set to 777");
+//     } catch (permErr) {
+//       console.error("Error setting directory permissions:", permErr);
+//     }
+//   } catch (err) {
+//     console.error('Error creating upload directories:', err);
+//     console.error('Error details:', JSON.stringify({
+//       code: err.code,
+//       path: err.path,
+//       errno: err.errno,
+//       syscall: err.syscall
+//     }));
+//   }
+// }
 
 // Middleware untuk serving static files
 const uploadsPath = path.resolve(__dirname, 'uploads');
@@ -150,7 +150,7 @@ app.get("/", (req, res) => {
     message: "Hello World", 
     env: {
       nodeEnv: process.env.NODE_ENV,
-      vercel: process.env.VERCEL,
+      // vercel: process.env.VERCEL,
       port: process.env.PORT
     }
   });
